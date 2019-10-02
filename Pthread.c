@@ -7,21 +7,54 @@
 void* thread( void*);
 void SimpleThread(int);
 
-
 int SharedVariable = 0;
-int main(int argc, char* argv[])
-{
-		
-  pthread_t  threads[NUM_THREADS];
-  int i, p = 0;
 
-	for( p ; p < argc; p++)
+
+
+int main(int argc, char *argv[])
+{ 
+  pthread_t threads[NUM_THREADS];
+  long pass;
+  int k =0;
+  int i = 0;
+  int check = 0;
+  int cnt = 0;
+  
+
+  for(argv[k]; argv[k] < strlen(argv[k+1]); argv++)
+  {
+    check = atoi( argv[k++]);
+
+    if(isdigit(check))
 	{
-		pthread_create(&threads[i], NULL, SimpleThread, (void *)p );
-		 
+		printf("****** ^ *****\n");
+		pass = check;
+
+		cnt = pthread_create(&threads[i++], NULL, thread, (void *) pass);
+
+		if(cnt)
+		{
+			printf("Error; return code from pthread_create() is %d\n", cnt);
+			exit(-1);
+		}
 	}
-  pthread_exit(NULL);
-  return 0;
+  }
+ 
+
+ pthread_exit(NULL);
+}
+
+
+
+void *thread( void* pass)
+{
+	long tid;
+	tid = (long) pass;
+	
+	SimpleThread(tid);
+
+	pthread_exit(NULL);
+
 }
 
 
@@ -29,7 +62,7 @@ int main(int argc, char* argv[])
 
 
 
-void *SimpleThread(int which)
+void SimpleThread(int which)
 {
 	int num, val = 0;
 	for(num; num < 20; num++)
